@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:todoey_flutter/widgets/tasks_list.dart';
 import 'add_task_screen.dart';
+import 'package:todoey_flutter/models/task.dart';
 
-class TasksScreen extends StatelessWidget {
-  Widget buildBottomSheet(BuildContext context) => AddTaskScreen(); // Container
+class TasksScreen extends StatefulWidget {
+  @override
+  _TasksScreenState createState() => _TasksScreenState();
+}
+
+class _TasksScreenState extends State<TasksScreen> {
+//  Widget buildBottomSheet(BuildContext context) =>
+//      AddTaskScreen((newTaskTitle) {
+//        setState(() {
+////                    print(newTaskTitle);
+//          tasks.add(Task(name: newTaskTitle));
+//          Navigator.pop(context);
+//        });
+//      });
+
+  List<Task> tasks = [
+    Task(name: 'Buy Milk'),
+    Task(name: 'Buy Shoes'),
+    Task(name: 'Eat food')
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +32,22 @@ class TasksScreen extends StatelessWidget {
         backgroundColor: Colors.lightBlueAccent,
         child: Icon(Icons.add),
         onPressed: () {
-          //NEW TASK
-          showModalBottomSheet(
+          showModalBottomSheet<dynamic>(
             context: context,
-            builder: buildBottomSheet,
+//            isScrollControlled: true,
+            // TODO: Upgrade and then try
+            builder: (context) => SingleChildScrollView(
+                    child: Container(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: AddTaskScreen((newTaskTitle) {
+                    setState(() {
+//                    print(newTaskTitle);
+                      tasks.add(Task(name: newTaskTitle));
+                    });
+                    Navigator.pop(context);
+                  }),
+                )),
           );
         },
       ),
@@ -48,7 +79,7 @@ class TasksScreen extends StatelessWidget {
                       fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  '12 Tasks',
+                  tasks.length.toString() + ' tasks',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -67,11 +98,13 @@ class TasksScreen extends StatelessWidget {
                   topEnd: Radius.circular(20),
                 ),
               ),
-              child: TasksList(),
+              child: TasksList(
+                tasks: tasks,
+              ),
             ),
           ),
         ],
       ),
     );
-  } // Main widget
+  }
 } // class
